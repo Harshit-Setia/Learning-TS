@@ -7,5 +7,6 @@ router.get("/",Controller.getNotes)
 router.get("/:noteID",Controller.getNote)
 router.post("/",Controller.createNote)
 router.patch("/:noteID",Controller.updateNote)
+router.delete("/:noteID",Controller.deleteNote)
 
 export default router
