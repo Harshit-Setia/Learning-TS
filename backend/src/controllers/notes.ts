@@ -1,5 +1,5 @@
 import { type RequestHandler } from "express"
-import NoteModel from "../models/note.js"
+import NoteModel from "../models/notes.js"
 import createHttpError from "http-errors"
 import mongoose from "mongoose"
 
@@ -43,14 +43,30 @@ export const createNote: RequestHandler<unknown,unknown,NoteBody,unknown>= async
         next(error)
     }
 }
-
-export const updateNote:RequestHandler=async (req,res,next)=>{
+interface UpdateNoteParams{
+    noteID: string
+}
+export const updateNote:RequestHandler<UpdateNoteParams,unknown,NoteBody,unknown>=async (req,res,next)=>{
+    
     const noteID=req.params.noteID
+    const newTitle=req.body.title
+    const newText=req.body.text
+
     try {
         if(!mongoose.isValidObjectId(noteID))throw createHttpError(400,"ID not Valid")
-        const note=await NoteModel.findByIdAndUpdate(noteID,req.body)
+        if(!newTitle||newTitle.trim().length===0)throw createHttpError(400,"Note Must have title")
+        
+        const note=await NoteModel.findById(noteID)
+
         if(!note)throw createHttpError(404,"note not found")
-        console.log("Note Updated")
+
+        //updating
+        note.title=newTitle
+        note.text=!newText?null:newText
+
+        const updatedNote=await note.save()
+
+        res.status(200).json({"message":"Note Updated",note:updatedNote})
     } catch (error) {
         next(error)
     }    
