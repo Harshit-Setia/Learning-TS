@@ -1,15 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import styles from "../styles/Note.module.css"
+import stylesUtil from "../styles/utils.module.css"
 import { Card } from "react-bootstrap"
 import { Note as NoteModel } from "../models/note"
 import { formatDate } from "../util/formatDate"
-
+import {MdDelete} from "react-icons/md"
+// import 
 interface NoteProps{
     note: NoteModel,
+    onNoteClicked:(note:NoteModel)=>void
     className?: string
+    onDeleteNoteClicked:(note:NoteModel)=>void
 }
 
-const Note=({note,className}:NoteProps)=>{
+const Note=({note,className,onNoteClicked,onDeleteNoteClicked}:NoteProps)=>{
     const{
         title,
         text,
@@ -26,10 +29,20 @@ const Note=({note,className}:NoteProps)=>{
     }
 
     return(
-        <Card className={`${styles.noteCard} ${className}`}>
+        <Card
+            onClick={()=>onNoteClicked(note)} 
+            className={`${styles.noteCard} ${className}`}
+        >
             <Card.Body className={styles.cardBody}>
-                <Card.Title>
+                <Card.Title className={stylesUtil.flexCenter}>
                     {title}
+                    <MdDelete
+                        className="text-muted ms-auto"
+                        onClick={(e)=>{
+                            onDeleteNoteClicked(note)
+                            e.stopPropagation()
+                        }}
+                    />
                 </Card.Title>
                 <Card.Text className={styles.noteText}>
                     {text}
