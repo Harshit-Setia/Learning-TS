@@ -13,7 +13,7 @@ const app = express();
 //middlewares
 app.use(express.json())
 app.use(morgan("dev"))
-app.use(session({
+app.use(session({ 
     secret: env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
