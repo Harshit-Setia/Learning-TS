@@ -38,7 +38,7 @@ export const createNote: RequestHandler<unknown,unknown,NoteBody,unknown>= async
             text:!text?null:text
         })
 
-        return res.status(201).json({"message":"New Note created","Note":newNote})
+        return res.status(201).json({"message":"New Note created","note":newNote})
     } catch (error) {
         next(error)
     }
