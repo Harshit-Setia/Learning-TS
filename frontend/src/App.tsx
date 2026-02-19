@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
-import * as NotesApi from "./network/notesApi";
 import LoginModal from './components/LoginModal';
 import NavBar from './components/NavBar';
 import SignUpModal from './components/SignUpModal';
 import { User } from './models/user';
-import styles from "./styles/NotesPage.module.css";
-import NotesPageLoggedInView from './components/NotesPageLoggedInView';
-import NotesPageLoggedOutView from './components/NotesPageLoggedOutView';
+import * as NotesApi from "./network/notesApi";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import NotesPage from './pages/NotesPage';
+import PrivacyPage from './pages/PrivacyPage';
+import NotFoundPage from './pages/NotFoundPage';
+import styles from "./styles/App.module.css"
 
 function App() {
   const [loggedInUser,setLoggedInUser]=useState<User|null>(null)
@@ -26,6 +28,7 @@ function App() {
     })()
   },[])
   return (
+    <BrowserRouter>
     <div>
       <NavBar
         loginUser={loggedInUser}
@@ -33,14 +36,21 @@ function App() {
         onSignupClicked={()=>setShowSignUpModal(true)}
         onLogoutSuccess={()=>setLoggedInUser(null)}
       />
-      <Container className={styles.notesPage}>
-        <>
-          {
-            loggedInUser?
-            <NotesPageLoggedInView />:
-            <NotesPageLoggedOutView />
-          }
-        </>
+      <Container className={styles.pageContainer}>
+        <Routes>
+          <Route 
+            path='/'
+            element={<NotesPage loggedInUser={loggedInUser}/>}
+          />
+          <Route 
+            path='/privacy'
+            element={<PrivacyPage />}
+          />
+          <Route
+            path='/*'
+            element={<NotFoundPage />}
+          />
+        </Routes>
       </Container>
       {
           showSignUpModal &&
@@ -67,6 +77,7 @@ function App() {
           />
         }
     </div>
+    </BrowserRouter>
   );
 }
 
